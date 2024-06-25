@@ -18,22 +18,6 @@ const giveCurrentDateTime = () => {
     return dateTime;
 }
 
-// export async function uploadFunc(filePath) {
-//     const dateTime = giveCurrentDateTime();
-//     const storageRef = ref(storage, `files/${dateTime}.zip`);
-//     console.log(storageRef)
-//     const metadata = {
-//         contentType: 'application/zip',
-//     };
-//     console.log('Tesstttt------')
-//     fs.readFile(filePath, async(err, data) => {
-//         const stub = await uploadBytesResumable(storageRef, data, metadata).then(() => {
-//             console.log("File uploaded successfully");
-//         }).catch((error) => {
-//             console.log(error);
-//         })
-//     })
-// }
 
 export async function uploadFunc(filePath) {
     const email = process.env.FIREBASE_EMAIL;
