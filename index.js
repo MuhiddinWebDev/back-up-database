@@ -14,7 +14,7 @@ const DB_PASS = process.env.DB_PASS;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
-// cron.schedule("00 23 * * *", () => {
+cron.schedule("00 23 * * *", () => {
   (() => {
     console.log("Operation started!");
     // connect to the MySQL server
@@ -28,9 +28,9 @@ console.log("Back up cron job is set!");
         console.error("error connecting: " + err.stack);
         return;
       }
-  
+
       console.log("connected as id " + connection.threadId);
-  
+
       // check if the backups directory exists, and create it if necessary
       if (fs.existsSync("backups")) {
         fs.rm("backups", { recursive: true }, (error) => {
@@ -51,13 +51,13 @@ console.log("Back up cron job is set!");
                       console.error("error fetching databases: " + error);
                       return;
                     }
-  
+
                     const expectedBackups = results.length;
                     let successfulBackups = 0;
                     results.forEach((result) => {
                       const database = result.Database;
                       const fileName = `backups/${database}.sql.gz`;
-  
+
                       const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
                       exec(cmd, (err) => {
                         if (err) {
@@ -72,24 +72,24 @@ console.log("Back up cron job is set!");
                             const archive = archiver("zip", {
                               zlib: { level: 9 },
                             });
-  
+
                             output.on("close", () => {
                               console.log("successfully created backups.zip");
                               const filePath = "backups.zip";
                               //upload to firebase start
                               uploadFunc(filePath);
                             });
-  
+
                             archive.on("error", (err) => {
                               console.error("error creating backups.zip: " + err);
                             });
-  
+
                             archive.pipe(output);
                             archive.directory("backups", false);
                             archive.finalize();
                             // Path to the file to send
                             //send file to bot
-  
+
                             // close the connection to the MySQL server once all databases are backed up
                             connection.end();
                           }
@@ -99,7 +99,7 @@ console.log("Back up cron job is set!");
                   });
                 }
               });
-            }else {
+            } else {
               console.log("File deleted successfully");
               // execute the command to backup each database separately
               connection.query("show databases", (error, results, fields) => {
@@ -158,7 +158,7 @@ console.log("Back up cron job is set!");
         });
       }
     });
-    // process.exit(1)
+    process.exit(1)
   })()
-// });
+});
 //set cron
