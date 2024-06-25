@@ -23,7 +23,7 @@ export async function uploadFunc(filePath) {
     const metadata = {
         contentType: 'application/zip',
     };
-
+    console.log('Tesstttt------')
     fs.readFile(filePath, async(err, data) => {
         const stub = await uploadBytesResumable(storageRef, data, metadata).then(() => {
             console.log("File uploaded successfully");
