@@ -1,14 +1,16 @@
-import { exec } from "child_process";
-import fs from "fs";
-import mysql from "mysql";
+import mysql from 'mysql';
+import { exec } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import archiver from "archiver";
 import dotenv from "dotenv";
-import cron from "node-cron";
 import { uploadFunc } from "./firebase.js";
-import path from "path";
 dotenv.config();
-
 // create a connection to the MySQL server
+const __filename = fileURLToPath(import.meta.url);
+
+// Get the directory name of the current file
+const __dirname = dirname(__filename);
 const DB_USER = process.env.DB_USER;
 const DB_HOST = process.env.DB_HOST;
 const DB_PASS = process.env.DB_PASS;
