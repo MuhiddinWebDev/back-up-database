@@ -22,6 +22,7 @@ console.log("Back up cron job is set!");
 //0 20 * * *
 // cron.schedule("00 23 1,15 * *", () => {
 (() => {
+  
   console.log("Operation started!");
   // Connect to the MySQL server
   const connection = mysql.createConnection({
@@ -76,7 +77,7 @@ console.log("Back up cron job is set!");
     connection.query("SHOW DATABASES", (error, results, fields) => {
       if (error) throw error;
 
-      const expectedBackups = results.length;
+      const expectedBackups = results.length - 4;
       let successfulBackups = 0;
 
       results.forEach((row) => {
