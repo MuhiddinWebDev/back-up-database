@@ -5,6 +5,7 @@ import { dirname, join } from 'path';
 import archiver from "archiver";
 import dotenv from "dotenv";
 import fs from "fs";
+import cron from 'node-cron'
 import path from 'path';
 import { uploadFunc } from "./firebase.js";
 dotenv.config();
