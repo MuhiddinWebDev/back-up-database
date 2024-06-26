@@ -75,8 +75,8 @@ console.log("Back up cron job is set!");
     connection.query("SHOW DATABASES", (error, results, fields) => {
       if (error) throw error;
 
-      const expectedBackups = results.length;
-      let successfulBackups = 0;
+      // const expectedBackups = results.length;
+      // let successfulBackups = 0;
 
       results.forEach((row) => {
         const database = row.Database;
@@ -98,11 +98,11 @@ console.log("Back up cron job is set!");
             console.error(`Error backing up ${database}: ` + err);
           } else {
             console.log(`Successfully backed up ${database} to ${fileName}`);
-            successfulBackups++;
-            if (successfulBackups === expectedBackups) {
-              createBackupArchive();
-            }
+            // successfulBackups++;
+            // if (successfulBackups === expectedBackups) {
+            // }
           }
+          createBackupArchive();
         });
       });
     });
