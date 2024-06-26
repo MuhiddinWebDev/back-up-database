@@ -14,151 +14,112 @@ const DB_PASS = process.env.DB_PASS;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
-cron.schedule("00 23 1,15 * *", () => {
+// cron.schedule("00 23 1,15 * *", () => {
   (() => {
     console.log("Operation started!");
-    // connect to the MySQL server
+    // Connect to the MySQL server
     const connection = mysql.createConnection({
       host: DB_HOST,
       user: DB_USER,
       password: DB_PASS,
     });
+
     connection.connect((err) => {
       if (err) {
-        console.error("error connecting: " + err.stack);
+        console.error("Error connecting: " + err.stack);
         return;
       }
 
-      console.log("connected as id " + connection.threadId);
+      console.log("Connected as id " + connection.threadId);
 
-      // check if the backups directory exists, and create it if necessary
+      // Check if the backups directory exists and create it if necessary
       if (fs.existsSync("backups")) {
         fs.rm("backups", { recursive: true }, (error) => {
           if (error) {
             console.error(`Failed to delete folder: ${error}`);
+            return;
           } else {
             console.log("Folder deleted successfully");
-            fs.mkdirSync("backups");
-            if (fs.existsSync("backups.zip")) {
-              fs.unlink("backups.zip", (error) => {
-                if (error) {
-                  console.error(`Failed to delete file: ${error}`);
-                } else {
-                  console.log("File deleted successfully");
-                  // execute the command to backup each database separately
-                  connection.query("show databases", (error, results, fields) => {
-                    if (error) {
-                      console.error("error fetching databases: " + error);
-                      return;
-                    }
-
-                    const expectedBackups = results.length;
-                    let successfulBackups = 0;
-                    results.forEach((result) => {
-                      const database = result.Database;
-                      const fileName = `backups/${database}.sql.gz`;
-
-                      const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
-                      exec(cmd, (err) => {
-                        if (err) {
-                          console.error(`error backing up ${database}: ` + err);
-                        } else {
-                          console.log(
-                            `successfully backed up ${database} to ${fileName}`
-                          );
-                          successfulBackups++;
-                          if (successfulBackups === expectedBackups) {
-                            const output = fs.createWriteStream("backups.zip");
-                            const archive = archiver("zip", {
-                              zlib: { level: 9 },
-                            });
-
-                            output.on("close", () => {
-                              console.log("successfully created backups.zip");
-                              const filePath = "backups.zip";
-                              //upload to firebase start
-                              uploadFunc(filePath);
-                            });
-
-                            archive.on("error", (err) => {
-                              console.error("error creating backups.zip: " + err);
-                            });
-
-                            archive.pipe(output);
-                            archive.directory("backups", false);
-                            archive.finalize();
-                            // Path to the file to send
-                            //send file to bot
-
-                            // close the connection to the MySQL server once all databases are backed up
-                            connection.end();
-                          }
-                        }
-                      });
-                    });
-                  });
-                }
-              });
-            } else {
-              console.log("File deleted successfully");
-              // execute the command to backup each database separately
-              connection.query("show databases", (error, results, fields) => {
-                if (error) {
-                  console.error("error fetching databases: " + error);
-                  return;
-                }
-
-                const expectedBackups = results.length;
-                let successfulBackups = 0;
-                results.forEach((result) => {
-                  const database = result.Database;
-                  const fileName = `backups/${database}.sql.gz`;
-
-                  const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
-                  exec(cmd, (err) => {
-                    if (err) {
-                      console.error(`error backing up ${database}: ` + err);
-                    } else {
-                      console.log(
-                        `successfully backed up ${database} to ${fileName}`
-                      );
-                      successfulBackups++;
-                      if (successfulBackups === expectedBackups) {
-                        const output = fs.createWriteStream("backups.zip");
-                        const archive = archiver("zip", {
-                          zlib: { level: 9 },
-                        });
-
-                        output.on("close", () => {
-                          console.log("successfully created backups.zip");
-                          const filePath = "backups.zip";
-                          //upload to firebase start
-                          uploadFunc(filePath);
-                        });
-
-                        archive.on("error", (err) => {
-                          console.error("error creating backups.zip: " + err);
-                        });
-
-                        archive.pipe(output);
-                        archive.directory("backups", false);
-                        archive.finalize();
-                        // Path to the file to send
-                        //send file to bot
-
-                        // close the connection to the MySQL server once all databases are backed up
-                        connection.end();
-                      }
-                    }
-                  });
-                });
-              });
-            }
+            createBackupsDirectory();
           }
         });
+      } else {
+        createBackupsDirectory();
       }
     });
-    process.exit(1)
-  })()
-});
+
+    function createBackupsDirectory() {
+      fs.mkdirSync("backups");
+      if (fs.existsSync("backups.zip")) {
+        fs.unlink("backups.zip", (error) => {
+          if (error) {
+            console.error(`Failed to delete file: ${error}`);
+            return;
+          } else {
+            console.log("File deleted successfully");
+            backupDatabases();
+          }
+        });
+      } else {
+        backupDatabases();
+      }
+    }
+
+    function backupDatabases() {
+      // Execute the command to backup each database separately
+      connection.query("SHOW DATABASES", (error, results, fields) => {
+        if (error) {
+          console.error("Error fetching databases: " + error);
+          return;
+        }
+
+        const expectedBackups = results.length;
+        let successfulBackups = 0;
+
+        results.forEach((result) => {
+          const database = result.Database;
+          const fileName = `backups/${database}.sql.gz`;
+
+          const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
+          exec(cmd, (err) => {
+            if (err) {
+              console.error(`Error backing up ${database}: ` + err);
+            } else {
+              console.log(`Successfully backed up ${database} to ${fileName}`);
+              successfulBackups++;
+              if (successfulBackups === expectedBackups) {
+                createBackupArchive();
+              }
+            }
+          });
+        });
+      });
+    }
+
+    function createBackupArchive() {
+      const output = fs.createWriteStream("backups.zip");
+      const archive = archiver("zip", {
+        zlib: { level: 9 },
+      });
+
+      output.on("close", () => {
+        console.log("Successfully created backups.zip");
+        const filePath = "backups.zip";
+        // Upload to Firebase
+        uploadFunc(filePath);
+        // Close the connection to the MySQL server
+        connection.end();
+      });
+
+      archive.on("error", (err) => {
+        console.error("Error creating backups.zip: " + err);
+      });
+
+      archive.pipe(output);
+      archive.directory("backups", false);
+      archive.finalize();
+    }
+  })();
+
+// });
 //set cron
