@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import archiver from "archiver";
 import dotenv from "dotenv";
+import fs from "fs"
 import { uploadFunc } from "./firebase.js";
 dotenv.config();
 // create a connection to the MySQL server
