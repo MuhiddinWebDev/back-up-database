@@ -98,11 +98,11 @@ console.log("Back up cron job is set!");
             console.error(`Error backing up ${database}: ` + err);
           } else {
             console.log(`Successfully backed up ${database} to ${fileName}`);
+            createBackupArchive();
             // successfulBackups++;
             // if (successfulBackups === expectedBackups) {
             // }
           }
-          createBackupArchive();
         });
       });
     });
