@@ -114,7 +114,9 @@ console.log("Back up cron job is set!");
     const archive = archiver("zip", {
       zlib: { level: 9 },
     });
-    console.log(output, archive)
+    console.log('Nexxxxxxxxxxxxxxxxxxxxx')
+
+    // console.log(output, archive)
     output.on("close", () => {
       console.log("Successfully created backups.zip");
       const filePath = "backups.zip";
