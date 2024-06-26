@@ -19,7 +19,7 @@ const DB_PASS = process.env.DB_PASS;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
-// cron.schedule("00 23 1,15 * *", () => {
+cron.schedule("00 23 1,15 * *", () => {
 (() => {
   console.log("Operation started!");
   // Connect to the MySQL server
@@ -109,12 +109,10 @@ console.log("Back up cron job is set!");
   }
 
   function createBackupArchive() {
-    console.log('Tesstssssssssssssssss')
     const output = fs.createWriteStream("backups.zip");
     const archive = archiver("zip", {
       zlib: { level: 9 },
     });
-    console.log('Nexxxxxxxxxxxxxxxxxxxxx')
 
     // console.log(output, archive)
     output.on("close", () => {
@@ -136,5 +134,5 @@ console.log("Back up cron job is set!");
   }
 })();
 
-// });
+});
 //set cron
