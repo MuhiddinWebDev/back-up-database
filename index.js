@@ -109,11 +109,12 @@ console.log("Back up cron job is set!");
   }
 
   function createBackupArchive() {
+    console.log('Tesstssssssssssssssss')
     const output = fs.createWriteStream("backups.zip");
     const archive = archiver("zip", {
       zlib: { level: 9 },
     });
-
+    console.log(output, archive)
     output.on("close", () => {
       console.log("Successfully created backups.zip");
       const filePath = "backups.zip";
