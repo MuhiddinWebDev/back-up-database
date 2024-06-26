@@ -89,7 +89,7 @@ console.log("Back up cron job is set!");
         const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '');
 
         // Define the backup file path with timestamp
-        const backupFile = path.join(__dirname, `${database}_${timestamp}.sql`);
+        const backupFile = path.join(__dirname, `backups/${database}_${timestamp}.sql`);
    
         const dumpCommand = `mysqldump --user=${DB_USER} --password=${DB_PASS} --host=${DB_HOST} ${database} > ${backupFile}`;
         // const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
