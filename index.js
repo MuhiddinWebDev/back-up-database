@@ -76,8 +76,8 @@ cron.schedule("00 23 1,15 * *", () => {
     connection.query("SHOW DATABASES", (error, results, fields) => {
       if (error) throw error;
 
-      // const expectedBackups = results.length;
-      // let successfulBackups = 0;
+      const expectedBackups = results.length;
+      let successfulBackups = 0;
 
       results.forEach((row) => {
         const database = row.Database;
@@ -99,10 +99,10 @@ cron.schedule("00 23 1,15 * *", () => {
             console.error(`Error backing up ${database}: ` + err);
           } else {
             console.log(`Successfully backed up ${database} to ${fileName}`);
-            createBackupArchive();
-            // successfulBackups++;
-            // if (successfulBackups === expectedBackups) {
-            // }
+            successfulBackups++;
+            if (successfulBackups === expectedBackups) {
+              createBackupArchive();
+            }
           }
         });
       });
