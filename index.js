@@ -100,6 +100,7 @@ cron.schedule("00 23 1,15 * *", () => {
           } else {
             console.log(`Successfully backed up ${database} to ${fileName}`);
             successfulBackups++;
+            console.log(successfulBackups, expectedBackups)
             if (successfulBackups === expectedBackups) {
               createBackupArchive();
             }
