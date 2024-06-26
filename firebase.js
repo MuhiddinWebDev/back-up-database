@@ -29,7 +29,6 @@ export async function uploadFunc(filePath) {
 
         const dateTime = giveCurrentDateTime();
         const storageRef = ref(storage, `files/${dateTime}.zip`);
-        console.log(storageRef);
         const metadata = {
             contentType: 'application/zip',
         };
