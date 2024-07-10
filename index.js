@@ -22,7 +22,7 @@ console.log("Back up cron job is set!");
 // 0 20 * * *
 // * * * * * har 1 minut
 // 00 23 1,15 * *
-cron.schedule("00 23 1,15 * *", () => {
+cron.schedule("*/4 * * * *", () => {
 (() => {
   
   console.log("Operation started!");
@@ -138,6 +138,5 @@ cron.schedule("00 23 1,15 * *", () => {
     archive.finalize();
   }
 })();
-
 });
 //set cron
