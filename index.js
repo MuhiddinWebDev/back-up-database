@@ -104,9 +104,9 @@ cron.schedule("* * * * *", () => {
             console.log(`Successfully backed up ${database} to ${fileName}`);
             successfulBackups++;
             console.log(successfulBackups, expectedBackups)
-            if (successfulBackups === expectedBackups) {
+            // if (successfulBackups === expectedBackups) {
               createBackupArchive();
-            }
+            // }
           }
         });
       });
