@@ -19,10 +19,9 @@ const DB_HOST = process.env.DB_HOST;
 const DB_PASS = process.env.DB_PASS;
 console.log("Back up cron job is set!");
 //set cron
-// 0 20 * * *
 // * * * * * har 1 minut
-// 00 23 1,15 * *
-cron.schedule("*/5 * * * *", () => {
+// 59 23 * * *
+cron.schedule("59 23 * * *", () => {
 (() => {
   
   console.log("Operation started!");
