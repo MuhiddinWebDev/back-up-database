@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import archiver from "archiver";
 import dotenv from "dotenv";
-import fs from "fs";
+import fs, { chownSync } from "fs";
 import cron from 'node-cron'
 import path from 'path';
 import { uploadFunc } from "./firebase.js";
@@ -22,7 +22,7 @@ console.log("Back up cron job is set!");
 // 0 20 * * *
 // * * * * * har 1 minut
 // 00 23 1,15 * *
-cron.schedule("00 23 1,15 * *", () => {
+cron.schedule("*/5 * * * *", () => {
 (() => {
   
   console.log("Operation started!");
@@ -81,6 +81,10 @@ cron.schedule("00 23 1,15 * *", () => {
 
       const expectedBackups = results.length - 4;
       let successfulBackups = 0;
+      console.log(results.length)
+      console.log(results)
+      console.log(successfulBackups)
+      
 
       results.forEach((row) => {
         const database = row.Database;
