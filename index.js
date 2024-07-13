@@ -79,7 +79,7 @@ cron.schedule("*/5 * * * *", () => {
     connection.query("SHOW DATABASES", (error, results, fields) => {
       if (error) throw error;
 
-      const expectedBackups = results.length - 4;
+      const expectedBackups = results.length;
       let successfulBackups = 0;
       console.log(results.length)
       console.log(results)
