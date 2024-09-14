@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import archiver from "archiver";
 import dotenv from "dotenv";
-import fs from "fs";
+import fs, { chownSync } from "fs";
 import cron from 'node-cron'
 import path from 'path';
 import { uploadFunc } from "./firebase.js";
@@ -19,8 +19,14 @@ const DB_HOST = process.env.DB_HOST;
 const DB_PASS = process.env.DB_PASS;
 console.log("Back up cron job is set!");
 //set cron
+<<<<<<< HEAD
 //0 20 * * *
 cron.schedule("*/2 * * * *", () => {
+=======
+// * * * * * har 1 minut
+// 59 23 * * *
+cron.schedule("59 23 * * *", () => {
+>>>>>>> 7824c0d7f066fe46c2f0fe1c47e4830a5271549e
 (() => {
   
   console.log("Operation started!");
@@ -77,8 +83,12 @@ cron.schedule("*/2 * * * *", () => {
     connection.query("SHOW DATABASES", (error, results, fields) => {
       if (error) throw error;
 
-      const expectedBackups = results.length - 4;
+      const expectedBackups = results.length;
       let successfulBackups = 0;
+      console.log(results.length)
+      console.log(results)
+      console.log(successfulBackups)
+      
 
       results.forEach((row) => {
         const database = row.Database;
@@ -102,9 +112,9 @@ cron.schedule("*/2 * * * *", () => {
             console.log(`Successfully backed up ${database} to ${fileName}`);
             successfulBackups++;
             console.log(successfulBackups, expectedBackups)
-            if (successfulBackups === expectedBackups) {
+            // if (successfulBackups === expectedBackups) {
               createBackupArchive();
-            }
+            // }
           }
         });
       });
@@ -136,6 +146,5 @@ cron.schedule("*/2 * * * *", () => {
     archive.finalize();
   }
 })();
-
 });
 //set cron
