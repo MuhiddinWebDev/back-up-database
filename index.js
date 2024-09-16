@@ -18,7 +18,7 @@ import cron from 'node-cron'
 // const DB_USER = process.env.DB_USER;
 // const DB_HOST = process.env.DB_HOST;
 // const DB_PASS = process.env.DB_PASS;
-// const CRON_TIME = process.env.CRON_TIME;
+const CRON_TIME = "0 0 * * *";
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
