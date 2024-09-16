@@ -20,8 +20,8 @@ const DB_PASS = process.env.DB_PASS;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
-// cron.schedule("*/2 * * * *", () => {
-cron.schedule("0 0 * * *", () => {
+cron.schedule("*/2 * * * *", () => {
+// cron.schedule("0 0 * * *", () => {
   (() => {
 
     console.log("Operation started!");
