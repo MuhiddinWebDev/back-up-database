@@ -7,17 +7,17 @@ import dotenv from "dotenv";
 import fs from "fs";
 import cron from 'node-cron'
 import path from 'path';
-import { uploadFunc } from "./firebase.js";
+// import { uploadFunc } from "./firebase.js";
 
 dotenv.config();
 // create a connection to the MySQL server
-const __filename = fileURLToPath(import.meta.url);
+// const __filename = fileURLToPath(import.meta.url);
 
-// Get the directory name of the current file
-const __dirname = dirname(__filename);
-const DB_USER = process.env.DB_USER;
-const DB_HOST = process.env.DB_HOST;
-const DB_PASS = process.env.DB_PASS;
+// // Get the directory name of the current file
+// const __dirname = dirname(__filename);
+// const DB_USER = process.env.DB_USER;
+// const DB_HOST = process.env.DB_HOST;
+// const DB_PASS = process.env.DB_PASS;
 const CRON_TIME = process.env.CRON_TIME;
 console.log("Back up cron job is set!");
 //set cron
@@ -27,7 +27,7 @@ cron.schedule(`${CRON_TIME}`, () => {
 // cron.schedule("0 0 * * *", () => {
   (() => {
     console.log("Operation started!");
-    
+
     // // Connect to the MySQL server
     // const connection = mysql.createConnection({
     //   host: DB_HOST,
