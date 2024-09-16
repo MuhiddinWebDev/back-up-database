@@ -8,6 +8,7 @@ import fs from "fs";
 import cron from 'node-cron'
 import path from 'path';
 import { uploadFunc } from "./firebase.js";
+
 dotenv.config();
 // create a connection to the MySQL server
 const __filename = fileURLToPath(import.meta.url);
@@ -21,122 +22,122 @@ const CRON_TIME = process.env.CRON_TIME;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
+console.log(CRON_TIME)
 cron.schedule(`${CRON_TIME}`, () => {
 // cron.schedule("0 0 * * *", () => {
   (() => {
-
     console.log("Operation started!");
-    // Connect to the MySQL server
-    const connection = mysql.createConnection({
-      host: DB_HOST,
-      user: DB_USER,
-      password: DB_PASS,
-    });
+    // // Connect to the MySQL server
+    // const connection = mysql.createConnection({
+    //   host: DB_HOST,
+    //   user: DB_USER,
+    //   password: DB_PASS,
+    // });
 
-    connection.connect((err) => {
-      if (err) {
-        console.error("Error connecting: " + err.stack);
-        return;
-      }
+    // connection.connect((err) => {
+    //   if (err) {
+    //     console.error("Error connecting: " + err.stack);
+    //     return;
+    //   }
 
-      console.log("Connected as id " + connection.threadId);
+    //   console.log("Connected as id " + connection.threadId);
 
-      // Check if the backups directory exists and create it if necessary
-      if (fs.existsSync("backups")) {
-        fs.rm("backups", { recursive: true }, (error) => {
-          if (error) {
-            console.error(`Failed to delete folder: ${error}`);
-            return;
-          } else {
-            console.log("Folder deleted successfully");
-            createBackupsDirectory();
-          }
-        });
-      } else {
-        createBackupsDirectory();
-      }
-    });
+    //   // Check if the backups directory exists and create it if necessary
+    //   if (fs.existsSync("backups")) {
+    //     fs.rm("backups", { recursive: true }, (error) => {
+    //       if (error) {
+    //         console.error(`Failed to delete folder: ${error}`);
+    //         return;
+    //       } else {
+    //         console.log("Folder deleted successfully");
+    //         createBackupsDirectory();
+    //       }
+    //     });
+    //   } else {
+    //     createBackupsDirectory();
+    //   }
+    // });
 
-    function createBackupsDirectory() {
-      fs.mkdirSync("backups");
-      if (fs.existsSync("backups.zip")) {
-        fs.unlink("backups.zip", (error) => {
-          if (error) {
-            console.error(`Failed to delete file: ${error}`);
-            return;
-          } else {
-            console.log("File deleted successfully");
-            backupDatabases();
-          }
-        });
-      } else {
-        backupDatabases();
-      }
-    }
+    // function createBackupsDirectory() {
+    //   fs.mkdirSync("backups");
+    //   if (fs.existsSync("backups.zip")) {
+    //     fs.unlink("backups.zip", (error) => {
+    //       if (error) {
+    //         console.error(`Failed to delete file: ${error}`);
+    //         return;
+    //       } else {
+    //         console.log("File deleted successfully");
+    //         backupDatabases();
+    //       }
+    //     });
+    //   } else {
+    //     backupDatabases();
+    //   }
+    // }
 
-    function backupDatabases() {
-      // Execute the command to backup each database separately
-      connection.query("SHOW DATABASES", (error, results, fields) => {
-        if (error) throw error;
+    // function backupDatabases() {
+    //   // Execute the command to backup each database separately
+    //   connection.query("SHOW DATABASES", (error, results, fields) => {
+    //     if (error) throw error;
 
-        const expectedBackups = results.length - 4;
-        let successfulBackups = 0;
+    //     const expectedBackups = results.length - 4;
+    //     let successfulBackups = 0;
 
-        results.forEach((row) => {
-          const database = row.Database;
-          const fileName = `backups/${database}.sql.gz`;
-          if (database === 'information_schema' || database === 'performance_schema' || database === 'mysql' || database === 'sys') {
-            // Skip system databases
-            return;
-          }
-          const now = new Date();
-          const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '');
+    //     results.forEach((row) => {
+    //       const database = row.Database;
+    //       const fileName = `backups/${database}.sql.gz`;
+    //       if (database === 'information_schema' || database === 'performance_schema' || database === 'mysql' || database === 'sys') {
+    //         // Skip system databases
+    //         return;
+    //       }
+    //       const now = new Date();
+    //       const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '-').replace(/\..+/, '');
 
-          // Define the backup file path with timestamp
-          const backupFile = path.join(__dirname, `backups/${database}_${timestamp}.sql`);
+    //       // Define the backup file path with timestamp
+    //       const backupFile = path.join(__dirname, `backups/${database}_${timestamp}.sql`);
 
-          const dumpCommand = `mysqldump --user=${DB_USER} --password=${DB_PASS} --host=${DB_HOST} ${database} > ${backupFile}`;
-          // const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
-          exec(dumpCommand, (err, stdout, stderr) => {
-            if (err) {
-              console.error(`Error backing up ${database}: ` + err);
-            } else {
-              console.log(`Successfully backed up ${database} to ${fileName}`);
-              successfulBackups++;
-              console.log(successfulBackups, expectedBackups)
-              if (successfulBackups === expectedBackups) {
-                createBackupArchive();
-              }
-            }
-          });
-        });
-      });
-    }
+    //       const dumpCommand = `mysqldump --user=${DB_USER} --password=${DB_PASS} --host=${DB_HOST} ${database} > ${backupFile}`;
+    //       // const cmd = `mysqldump --skip-lock-tables --databases ${database} | gzip > ${fileName}`;
+    //       exec(dumpCommand, (err, stdout, stderr) => {
+    //         if (err) {
+    //           console.error(`Error backing up ${database}: ` + err);
+    //         } else {
+    //           console.log(`Successfully backed up ${database} to ${fileName}`);
+    //           successfulBackups++;
+    //           console.log(successfulBackups, expectedBackups)
+    //           if (successfulBackups === expectedBackups) {
+    //             createBackupArchive();
+    //           }
+    //         }
+    //       });
+    //     });
+    //   });
+    // }
 
-    function createBackupArchive() {
-      const output = fs.createWriteStream("backups.zip");
-      const archive = archiver("zip", {
-        zlib: { level: 9 },
-      });
+    // function createBackupArchive() {
+    //   const output = fs.createWriteStream("backups.zip");
+    //   const archive = archiver("zip", {
+    //     zlib: { level: 9 },
+    //   });
 
-      // console.log(output, archive)
-      output.on("close", () => {
-        console.log("Successfully created backups.zip");
-        const filePath = "backups.zip";
-        // Upload to Firebase
-        uploadFunc(filePath);
-        // Close the connection to the MySQL server
-        connection.end();
-      });
+    //   // console.log(output, archive)
+    //   output.on("close", () => {
+    //     console.log("Successfully created backups.zip");
+    //     const filePath = "backups.zip";
+    //     // Upload to Firebase
+    //     uploadFunc(filePath);
+    //     // Close the connection to the MySQL server
+    //     connection.end();
+    //   });
 
-      archive.on("error", (err) => {
-        console.error("Error creating backups.zip: " + err);
-      });
+    //   archive.on("error", (err) => {
+    //     console.error("Error creating backups.zip: " + err);
+    //   });
 
-      archive.pipe(output);
-      archive.directory("backups", false);
-      archive.finalize();
-    }
+    //   archive.pipe(output);
+    //   archive.directory("backups", false);
+    //   archive.finalize();
+    // }
   })();
 
 });
