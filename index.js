@@ -27,6 +27,7 @@ cron.schedule(`${CRON_TIME}`, () => {
 // cron.schedule("0 0 * * *", () => {
   (() => {
     console.log("Operation started!");
+    
     // // Connect to the MySQL server
     // const connection = mysql.createConnection({
     //   host: DB_HOST,
