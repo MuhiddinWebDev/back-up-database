@@ -17,10 +17,11 @@ const __dirname = dirname(__filename);
 const DB_USER = process.env.DB_USER;
 const DB_HOST = process.env.DB_HOST;
 const DB_PASS = process.env.DB_PASS;
+const CRON_TIME = process.env.CRON_TIME;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
-cron.schedule("*/2 * * * *", () => {
+cron.schedule(`${CRON_TIME}`, () => {
 // cron.schedule("0 0 * * *", () => {
   (() => {
 
