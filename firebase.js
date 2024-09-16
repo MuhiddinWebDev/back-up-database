@@ -22,16 +22,17 @@ const giveCurrentDateTime = () => {
 export async function uploadFunc(filePath) {
     const email = process.env.FIREBASE_EMAIL;
     const password = process.env.FIREBASE_PASSWORD;
-
+    const client_name = process.env.CLIENT_NAME;
     try {
         await signInWithEmailAndPassword(auth, email, password);
         console.log('User signed in successfully');
 
         const dateTime = giveCurrentDateTime();
-        const storageRef = ref(storage, `files/${dateTime}.zip`);
+        const storageRef = ref(storage, `files/${dateTime}_${client_name}.zip`);
         const metadata = {
             contentType: 'application/zip',
         };
+        
         console.log('Uploading file...');
 
         const fileBuffer = fs.readFileSync(filePath);
