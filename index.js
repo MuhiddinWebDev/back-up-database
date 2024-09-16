@@ -1,15 +1,15 @@
-import mysql from 'mysql';
-import { exec } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import archiver from "archiver";
-import dotenv from "dotenv";
-import fs from "fs";
+// import mysql from 'mysql';
+// import { exec } from 'child_process';
+// import { fileURLToPath } from 'url';
+// import { dirname, join } from 'path';
+// import archiver from "archiver";
+// import dotenv from "dotenv";
+// import fs from "fs";
 import cron from 'node-cron'
-import path from 'path';
+// import path from 'path';
 // import { uploadFunc } from "./firebase.js";
 
-dotenv.config();
+// dotenv.config();
 // create a connection to the MySQL server
 // const __filename = fileURLToPath(import.meta.url);
 
@@ -18,11 +18,11 @@ dotenv.config();
 // const DB_USER = process.env.DB_USER;
 // const DB_HOST = process.env.DB_HOST;
 // const DB_PASS = process.env.DB_PASS;
-const CRON_TIME = process.env.CRON_TIME;
+// const CRON_TIME = process.env.CRON_TIME;
 console.log("Back up cron job is set!");
 //set cron
 //0 20 * * *
-console.log(CRON_TIME)
+// console.log(CRON_TIME)
 cron.schedule(`${CRON_TIME}`, () => {
 // cron.schedule("0 0 * * *", () => {
   (() => {
