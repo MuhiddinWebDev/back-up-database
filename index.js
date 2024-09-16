@@ -24,6 +24,7 @@ console.log("Back up cron job is set!");
 //0 20 * * *
 // console.log(CRON_TIME)
 cron.schedule(`${CRON_TIME}`, () => {
+  
   // cron.schedule("0 0 * * *", () => {
   (() => {
     console.log("Operation started!");
